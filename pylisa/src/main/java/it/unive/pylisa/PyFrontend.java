@@ -21,6 +21,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
 
+import it.unive.lisa.*;
+import it.unive.lisa.analysis.heap.HeapDomain;
+import it.unive.lisa.analysis.numeric.Interval;
+import it.unive.lisa.analysis.value.TypeDomain;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -35,10 +39,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-import it.unive.lisa.AnalysisException;
-import it.unive.lisa.AnalysisSetupException;
-import it.unive.lisa.LiSA;
-import it.unive.lisa.LiSAConfiguration;
 import it.unive.lisa.analysis.AbstractState;
 import it.unive.lisa.analysis.heap.pointbased.PointBasedHeap;
 import it.unive.lisa.analysis.nonrelational.value.TypeEnvironment;
@@ -337,10 +337,13 @@ public class PyFrontend extends Python3ParserBaseVisitor<Object> {
 		conf.setDumpAnalysis(true);
 		conf.setInterproceduralAnalysis(new ContextBasedAnalysis<>());
 
-		DataframeGraphDomain domain = new DataframeGraphDomain();
-		PointBasedHeap heap = new PointBasedHeap();
+		/*DataframeGraphDomain domain = new DataframeGraphDomain();
+		PointBasedHeap heap = new PointBasedHeap();*/
 		TypeEnvironment<InferredTypes> type = new TypeEnvironment<>(new InferredTypes());
-		conf.setAbstractState(getDefaultFor(AbstractState.class, heap, domain, type));
+		//conf.setAbstractState(getDefaultFor(AbstractState.class, heap, domain, type));*/
+
+		conf.setAbstractState(LiSAFactory.getDefaultFor(AbstractState.class, LiSAFactory.getDefaultFor(HeapDomain.class),
+				new Interval(), type));
 
 		LiSA lisa = new LiSA(conf);
 		lisa.run(program);
